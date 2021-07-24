@@ -1,0 +1,34 @@
+version: '3.0'
+
+services:
+  mailme:
+    build: .
+    depends_on: 
+        - mysqldb
+    ports:
+        - "3000:3000"
+    environment: 
+        PORT: "3000"
+        DB_HOST: mysqldb
+        DB_USERNAME: root
+        DB_PASSWORD: $MYSQL_ROOT_PASSWORD
+        DB_DATABASE: $MYSQL_DATABASE
+
+    restart: unless-stopped
+  
+  mysqldb:
+    image: mysql
+    restart: always
+    env_file: ./.env
+    environment:
+        MYSQL_LOCAL_PORT: 3306
+        MYSQL_DOCKER_PORT: 3306
+        MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+        MYSQL_DATABASE: $MYSQL_DATABASE
+    volumes: 
+        - db-config:/etc/mysql
+        - db-data:/var/lib/mysql
+
+volumes: 
+    db-config:
+    db-data:

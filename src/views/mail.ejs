@@ -1,0 +1,104 @@
+<%- include('./header.ejs', { title: '编辑邮件' } ) %>
+<form id="mailform" method="POST">
+    <div class="ui form">
+        <div style="text-align: center; margin: 2px 2px 2px 2px">
+            <% if (!mail?.isSent) { %>
+            <button id="send" class="ui labeled submit blue icon button">
+                <i class="icon send"></i> 发送
+            </button>
+
+            <button id="schedule" class="ui labeled submit yellow icon button">
+                <i class="icon clock"></i> 定时发送
+            </button>
+
+            <button id="save" class="ui labeled submit green icon button">
+                <i class="icon save"></i> 暂存
+            </button>
+            <% } %>
+        </div>
+
+        <label for="username">发件帐户</label>
+        <select id="transportId" name="transportId">
+            <% for (let transport of smtpTransports) { %>
+                <option value="<%= transport.id %>"><%= transport.address %> (<%= "smtp" + (transport.secure ? "s" : "") + "://" + transport.host + ':' + transport.port %>)</option>
+            <% } %>
+        </select>
+        <div style="margin-top: 15px; "></div>
+
+        <label for="address">发件人称呼(代发邮件地址可选)</label>
+        <input type="text" id="from" name="from" value="<%= mail?.from ?? "" %>" />
+        <div style="margin-top: 15px; "></div>
+
+        <label for="host">收件人</label>
+        <div class="ui checkbox" style="margin-left: 15px;">
+            <input class="ui checkbox" type="checkbox" name="isolateReceivers" id="isolateReceivers" <%= mail?.isolateReceivers ? "checked" : "" %>>
+            <label for="scheduled">隔离收件人</label>
+        </div>
+        <input type="email" id="to" name="to" value="<%= mail?.to ?? "" %>" />
+        <div style="margin-top: 15px; "></div>
+        
+        <label for="port">主题</label>
+        <input type="text" id="subject" name="subject" value="<%= mail?.subject ?? "" %>" />
+        <div style="margin-top: 15px; "></div>
+        
+        <div class="ui checkbox" style="margin-top: 15px; ">
+            <input type="checkbox" name="scheduled" id="scheduled" <%= mail?.isScheduled ? "checked" : "" %>>
+            <label for="scheduled">定时</label>
+            <br>
+        </div>
+        <div id="datetime" style="justify-content: space-between;">
+            <input style="width: 49.5%; display: inline-block;" type="date" id="date" name="date" value="<%= mail?.sendTime?.toISOString().split('T')[0] ?? "" %>" />
+            <input style="width: 49.5%; display: inline-block;" type="time" id="time" name="time" value="<%= mail?.sendTime?.toTimeString().split(' ')[0] ?? "" %>" />
+        </div>
+        <div style="margin-top: 15px; "></div>
+
+        <label for="content">邮件内容</label>
+        <div class="ui checkbox" style="margin-left: 15px;">
+            <input class="ui checkbox" type="checkbox" name="usehtml" id="usehtml" <%= (mail?.html ?? true) ? "checked" : "" %>>
+            <label for="scheduled">使用 HTML</label>
+        </div>
+        <textarea name="content" id="content" rows="20"><%- (mail?.html || mail?.text) ?? "" %></textarea>
+    </div>
+</form>
+
+<script>
+function showHideTimeSelection() {
+    if (document.getElementById("scheduled").checked) {
+        $("#send").hide();
+        $("#schedule").show();
+        $("#datetime").show();
+    }
+    else {
+        $("#send").show();
+        $("#schedule").hide();
+        $("#datetime").hide();
+    }
+}
+
+function formSubmit(callback) {
+    $("#mailform").submit(function(e) {
+        e.preventDefault();
+        $.ajax(({
+            url: window.location.href + '?mode=ajax',
+            type: 'post',
+            data: $("#mailform").serialize(),
+            success: callback
+        }));
+    })
+}
+showHideTimeSelection();
+$("#scheduled").change(showHideTimeSelection);
+$("#send").click(function() {
+    formSubmit(function(data) {
+        var id = JSON.parse(data).id;
+        window.location.href = "/mail/" + id + "/send"
+    })
+});
+$("#schedule").click(function() {
+    formSubmit(function(data) {
+        var id = JSON.parse(data).id;
+        window.location.href = "/mail/" + id + "/schedule"
+    })
+});
+</script>
+<%- include('./footer.ejs') %>

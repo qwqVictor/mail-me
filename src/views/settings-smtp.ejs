@@ -1,0 +1,42 @@
+<%- include('./header.ejs', { title: '编辑 SMTP 发件帐户'} ) %>
+<form method="POST">
+    <div class="ui form">
+        <label for="address">邮件地址</label>
+        <input type="email" id="address" name="address" value="<%= smtpTransport?.address ?? "" %>" />
+        <div style="margin-top: 15px; "></div>
+
+        <label for="host">SMTP 服务器</label>
+        <input type="text" id="host" name="host" value="<%= smtpTransport?.host ?? "" %>" />
+        <div style="margin-top: 15px; "></div>
+        
+        <label for="port">SMTP 端口</label>
+        <input type="number" id="port" name="port" value="<%= smtpTransport?.port ?? 25 %>" />
+        <div style="margin-top: 15px; "></div>
+        
+        <div class="ui checkbox" style="margin-top: 15px; ">
+            <input type="checkbox" name="secure" <%= smtpTransport?.secure ? "checked" : "" %>>
+            <label for="secure">使用 SSL/TLS</label>
+        </div>
+        <div style="margin-top: 15px; "></div>
+
+        <label for="username">SMTP 用户名</label>
+        <input type="text" id="username" name="username" value="<%= smtpTransport?.username ?? "" %>" />
+        <div style="margin-top: 15px; "></div>
+
+        <label for="password">SMTP 密码</label>
+        <input type="password" id="password" name="password" value="<%= smtpTransport?.password ?? "" %>" />
+        <div style="margin-top: 15px; "></div>
+
+        <div style="text-align: center; margin: 2px 2px 2px 2px">
+            <button type="submit" class="ui labeled submit icon button">
+                <i class="icon edit"></i> 提交
+            </button>
+        </div>
+    </div>
+</form>
+<script>
+    $("#address").change(function(e) {
+        document.getElementById("username").placeholder = document.getElementById("address").value;
+    });
+</script>
+<%- include('./footer.ejs') %>

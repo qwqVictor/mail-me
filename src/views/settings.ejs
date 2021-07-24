@@ -1,0 +1,36 @@
+<%- include('./header.ejs', { title: '设置'} ) %>
+<div class="padding">
+    <div class="ui grid">
+      <div class="row">
+        <div class="ten wide column">
+        </div>
+        <div class="six wide right aligned column" style="margin-bottom: 10px; ">    
+            <a style="margin-left: 10px; " href="/settings/smtp/0" class="ui labeled icon mini button">
+                <i class="write icon"></i>
+                添加
+            </a>
+        </div>
+      </div>
+    </div>
+    
+    <table class="ui very basic center aligned table">
+      <thead>
+        <tr>
+          <th class="left aligned" style="width: 55%; ">发信地址</th>
+          
+          <th style="width: 40%; ">服务器</th>
+          <th style="width: 5%; ">删除</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% for (let smtpTransport of smtpTransports) { %>
+          <tr>
+                <td class="left aligned"><a href="/settings/smtp/<%= smtpTransport.id %>"><%= smtpTransport.address %></a></td>
+                <td><%= "smtp" + (smtpTransport.secure ? "s" : "") + "://" + smtpTransport.host + ':' + smtpTransport.port %></td>
+                <td><a href="/settings/smtp/<%= smtpTransport.id %>/delete" style="color: red;"><i class="remove icon"></i></a></td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+<%- include('./footer.ejs') %>

@@ -1,0 +1,6 @@
+.idea/
+yarn-error.log
+node_modules/
+build/
+tmp/
+temp/

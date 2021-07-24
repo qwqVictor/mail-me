@@ -1,0 +1,5 @@
+<%- include('./header.ejs', { title: '信息' } ) %>
+<%= message %>
+<br>
+<a href="<%= referer ? referer : "javascript:history.back(-1);" %>">返回</a>
+<%- include('./footer.ejs') %>

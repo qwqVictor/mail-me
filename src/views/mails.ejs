@@ -1,0 +1,65 @@
+<%- include('./header.ejs', { title: '首页' } ) %>
+    <div class="padding">
+        <div class="ui grid">
+            <div class="row">
+                <div class="ten wide column">
+                </div>
+                <div class="six wide right aligned column" style="margin-bottom: 10px; ">
+                    <a style="margin-left: 10px; " href="/mail/0" class="ui labeled icon mini button">
+                        <i class="write icon"></i>
+                        新建邮件
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <table class="ui very basic center aligned table">
+            <thead>
+                <tr>
+                    <th class="left aligned" style="width: 45%; ">主题</th>
+
+                    <th style="width: 20%; ">发件帐户</th>
+                    <th style="width: 20%; ">发件时间</th>
+                    <th style="width: 15%; ">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let mail of mails) { %>
+                    <tr>
+                        <td class="left aligned"><a href="/mail/<%= mail.id %>">
+                                <%= mail.subject ? mail.subject : "(无主题)" %>
+                            </a></td>
+                        <td><a <%= mail.transport ? `href=/settings/smtp/${mail.transportId}` : "" %>><%=
+                                    mail.transport?.address ?? "已删除的发件帐户" %>
+                        </td>
+                        <td>
+                            <%= mail.sendTime?.toLocaleString('zh') %>
+                                <%= mail.isSent ? " - 已发送" : (mail.inScheduledTask ? " - 已计划" : "") %>
+                        </td>
+                        <td>
+                            <% if (!mail.isSent) { %>
+                            <a href="/mail/<%= mail.id %>/send" style="color: blue;"><i class="send icon"></i></a>
+                            <% } %>
+                            <a href="/mail/<%= mail.id %>/delete" style="color: red;"><i class="remove icon"></i></a>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+        <div style="text-align: center; ">
+            <div class="ui pagination menu" style="box-shadow: none; ">
+                <a class="<%= page == 1 ? "disabled " : "" %>icon item" <%= page == 1 ? "" : `href=/mail/?page=${page - 1}` %> id="page_prev">
+                    <i class="left chevron icon"></i>
+                </a>
+
+                <% for (let i = 1; i <= count; i++) { %>
+                    <a class="<%= page == i ? "active " : "" %>item" href="/mail/?page=<%= i %>"><%= i %></a>
+                <% } %>
+
+                <a class="<%= page == count ? "disabled " : "" %>icon item" <%= page == count ? "" : `href=/mail/?page=${page + 1}` %> id="page_next">
+                    <i class="right chevron icon"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+<%- include('./footer.ejs' ) %>
